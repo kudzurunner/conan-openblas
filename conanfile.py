@@ -2,6 +2,10 @@ from conans import ConanFile, CMake, tools
 import shutil
 import os
 
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 class OpenblasConan(ConanFile):
     name = "openblas"
@@ -61,6 +65,17 @@ conan_basic_setup()''')
     def package(self):
         self.copy(pattern="LICENSE", dst="licenses", src=self.source_name, keep_path=False, ignore_case=True)
 
+        out = StringIO()
+        try:
+            self.run("where flang.dll", output=out)
+        except Exception as e:
+            raise Exception("Failed to get flang.dll path: [{0}]{1}".format(e, out.getvalue()))
+
+        libdir = os.path.dirname(os.path.normpath(out.getvalue().strip()))
+        self.copy(pattern="flang.dll", dst="bin", src=libdir, keep_path=False)
+        self.copy(pattern="flangrti.dll", dst="bin", src=libdir, keep_path=False)
+        self.copy(pattern="libomp.dll", dst="bin", src=libdir, keep_path=False)
+
     def package_info(self):
         try:
             shutil.move("lib64", "lib")
@@ -71,6 +86,7 @@ conan_basic_setup()''')
         self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.build_type == "Debug" and not (self.settings.os == "Windows" and self.settings.compiler == "gcc"):
             self.cpp_info.libs[0] += "d"
+
         if self.settings.os == "Linux":
             self.cpp_info.libs.append("pthread")
 
