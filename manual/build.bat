@@ -1,7 +1,7 @@
 @echo on
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-set MINICONDA="Miniconda3-x64"
+set MINICONDA="C:\Miniconda3-x64"
 set PATH=%MINICONDA%;%MINICONDA%/Scripts/;%MINICONDA%/Library/bin;%PATH%
 set LIB=%MINICONDA%/Library/lib;%LIB%
 set CPATH=%MINICONDA%/Library/include;%CPATH%
