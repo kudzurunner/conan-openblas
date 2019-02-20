@@ -1,0 +1,2 @@
+# conan-openblas [![Build status](https://ci.appveyor.com/api/projects/status/ya1sjwcdwym56fwc?svg=true)](https://ci.appveyor.com/project/kudzurunner/conan-openblas)
+Conan recipe for the [OpenBLAS](https://www.openblas.net/) project

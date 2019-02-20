@@ -1,0 +1,67 @@
+version: 1.0.{build}
+environment:
+  PYTHON: C:\Miniconda3-x64
+  PYTHON_VERSION: "3.7"
+  PYTHON_ARCH: 64
+  CONAN_UPLOAD: https://api.bintray.com/conan/kudzurunner/conan-stable
+  CONAN_REMOTE: conan-stable
+  CONAN_REFERENCE: openblas/0.3.5
+  CONAN_USERNAME: kudzurunner
+  CONAN_CHANNEL: stable
+  CONAN_PASSWORD:
+    secure: FHRzS1Qt5LEb3S+po6y9BkjaPm/d5gv56M9ZC90wpJVIJs/f4ljLdVoXhbqk4jEZ
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VCVARS: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat
+      MSC_VERSION: 1900
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VCVARS: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat
+      MSC_VERSION: 1916
+
+install:
+- cmd: >-
+    set PATH=%PYTHON%;%PYTHON%/Scripts/;%PYTHON%/Library/bin;%PATH%
+
+    set LIB=%PYTHON%/Library/lib;%LIB%
+
+    set CPATH=%PYTHON%/Library/include;%CPATH%
+
+- ps: >-
+    conda config --set always_yes true
+
+    conda update -n base conda
+
+    conda config --add channels conda-forge
+
+    conda install -y cmake flang clangdev perl libflang
+
+    conda install -y -c isuruf kitware-ninja
+- cmd: >-
+    pip install conan --upgrade
+
+    conan remote add conan-stable https://api.bintray.com/conan/kudzurunner/conan-stable
+build_script:
+- cmd: >-
+    call "%VCVARS%"
+
+    set CC=clang-cl
+
+    set CXX=clang-cl
+
+    set CFLAGS=-m64 -fmsc-version=%MSC_VERSION%
+
+    set CXXFLAGS=-m64 -fmsc-version=%MSC_VERSION%
+
+    set CONAN_CMAKE_GENERATOR=Ninja
+
+    conan create . kudzurunner/stable -s compiler=clang -s compiler.libcxx=libstdc++ -s compiler.version=5.0
+
+deploy_script:
+- cmd: >-
+    set CONAN_REFERENCE_FULL=%CONAN_REFERENCE%@%CONAN_USERNAME%/%CONAN_CHANNEL%
+
+    echo %CONAN_REFERENCE_FULL%
+
+    conan user -p %CONAN_PASSWORD% --remote %CONAN_REMOTE% %CONAN_USERNAME%
+
+    conan upload --all --remote %CONAN_REMOTE%  %CONAN_REFERENCE_FULL%
