@@ -10,4 +10,5 @@ set CXX=clang-cl
 set CFLAGS=-m64 -fmsc-version=1916
 set CXXFLAGS=-m64 -fmsc-version=1916
 set CONAN_CMAKE_GENERATOR=Ninja
-conan create . kudzurunner/stable -s compiler=clang -s compiler.libcxx=libstdc++ -s compiler.version=5.0
+conan create . kudzurunner/stable -s compiler=clang -s compiler.libcxx=libstdc++ -s compiler.version=5.0 -s build_type=Debug
+conan create . kudzurunner/stable -s compiler=clang -s compiler.libcxx=libstdc++ -s compiler.version=5.0 -s build_type=Release
