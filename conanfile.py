@@ -20,6 +20,7 @@ class OpenblasConan(ConanFile):
     generators = "cmake"
 
     source_name = "OpenBLAS-{}".format(version)
+    suffix = ""
 
     def build_requirements(self):
         if self.settings.os == "Windows":
@@ -40,11 +41,15 @@ class OpenblasConan(ConanFile):
         tools.untargz(filename=archive_name)
         os.remove(archive_name)
 
+        self.suffix = ("_d" if self.settings.build_type == "Debug" else "")
         tools.replace_in_file(
             "{}/CMakeLists.txt".format(self.source_name), "project(OpenBLAS C ASM)",
             '''project(OpenBLAS C ASM)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()''')
+conan_basic_setup()
+if(NOT CMAKE_DEBUG_POSTFIX)
+  set(CMAKE_DEBUG_POSTFIX %s)
+endif()''' % self.suffix)
 
         tools.replace_in_file(
             "{}/utest/CMakeLists.txt".format(self.source_name), "if (MSVC)",
@@ -58,6 +63,7 @@ conan_basic_setup()''')
         cmake.definitions["USE_THREAD"] = "OFF"
         cmake.definitions["BUILD_WITHOUT_LAPACK"] = "OFF"
         cmake.definitions["NOFORTRAN"] = "OFF"
+        cmake.definitions["CMAKE_BUILD_TYPE"] = self.settings.build_type
         cmake.configure(source_folder=self.source_name, build_folder="build")
         cmake.build()
         cmake.install()
@@ -84,8 +90,6 @@ conan_basic_setup()''')
 
         self.cpp_info.includedirs = ["include/openblas"]
         self.cpp_info.libs = tools.collect_libs(self)
-        if self.settings.build_type == "Debug" and not (self.settings.os == "Windows" and self.settings.compiler == "gcc"):
-            self.cpp_info.libs[0] += "d"
 
         if self.settings.os == "Linux":
             self.cpp_info.libs.append("pthread")
