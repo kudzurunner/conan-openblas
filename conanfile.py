@@ -7,9 +7,10 @@ try:
 except ImportError:
     from io import StringIO
 
+
 class OpenblasConan(ConanFile):
     name = "openblas"
-    version = "0.3.5"
+    version = "0.3.7"
     license = "https://raw.githubusercontent.com/xianyi/OpenBLAS/develop/LICENSE"
     author = "KudzuRunner"
     url = "https://github.com/kudzurunner/conan-openblas"
@@ -52,8 +53,8 @@ if(NOT CMAKE_DEBUG_POSTFIX)
 endif()''' % self.suffix)
 
         tools.replace_in_file(
-            "{}/utest/CMakeLists.txt".format(self.source_name), "if (MSVC)",
-            "if (MSVC AND NOT \"${CMAKE_C_COMPILER_ID}\" MATCHES Clang)")
+            "{}/utest/CMakeLists.txt".format(self.source_name), "if (MSVC AND BUILD_SHARED_LIBS)",
+            "if (MSVC AND BUILD_SHARED_LIBS AND NOT \"${CMAKE_C_COMPILER_ID}\" MATCHES Clang)")
 
     def build(self):
         os.mkdir("build")
