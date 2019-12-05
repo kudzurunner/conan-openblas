@@ -5,18 +5,15 @@ environment:
   PYTHON_ARCH: 64
   CONAN_UPLOAD: https://api.bintray.com/conan/kudzurunner/conan-stable
   CONAN_REMOTE: conan-stable
-  CONAN_REFERENCE: openblas/0.3.5
+  CONAN_REFERENCE: openblas/0.3.7
   CONAN_USERNAME: kudzurunner
   CONAN_CHANNEL: stable
   CONAN_PASSWORD:
     secure: FHRzS1Qt5LEb3S+po6y9BkjaPm/d5gv56M9ZC90wpJVIJs/f4ljLdVoXhbqk4jEZ
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      VCVARS: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat
-      MSC_VERSION: 1900
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      VCVARS: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat
-      MSC_VERSION: 1916
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      VCVARS: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
+      MSC_VERSION: 1923
 
 install:
 - cmd: >-
